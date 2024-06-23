@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introduction Page</title>
+    <title>DailyTipster</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png')}}">
 </head>
 <body class="bg-gray-800">
-    <header class="bg-gray-800 text-white p-4 flex justify-between items-center">
+    <header class="bg-gray-800 text-white p-4 flex justify-between items-center fixed top-0 left-0 w-full z-10 shadow-md">
         <h1 class="text-4xl font-extrabold tracking-wide animated-header flex items-center space-x-2">   
             <span class="text-yellow-400 md:text-4xl">RACK$</span>
             <span class="text-yellow-400"> IN </span>
@@ -22,7 +22,7 @@
         </div>
     </header>
 
-    <main class="mt-6 flex">
+    <main class="mt-24 flex"> <!-- Adjust the top margin to account for the fixed header -->
         <div class="w-1/4 px-4">
             <h2 class="text-white text-xl mb-4">Our top predictors</h2>
             <div class="leaderboard-item">

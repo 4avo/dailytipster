@@ -111,3 +111,7 @@
 .predictions-item .outcome {
     color: #fff;
 }
+
+@font-face { font-family: Delicious; src: url('Delicious-Roman.otf'); } 
+
+body { font-family: Delicious, sans-serif; }
