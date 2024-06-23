@@ -1,0 +1,113 @@
+@keyframes slideLeft {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+.animated-header {
+    animation: slideLeft 1s ease-out;
+}
+.main-content {
+    max-width: 800px;
+    margin: 40px auto; 
+    padding: 20px;
+    text-align: center;
+    background-color: #2d2d2d; 
+    color: white; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+.feature {
+    margin-bottom: 40px;
+}
+.feature h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.feature p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #ddd;
+}
+.feature img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+.left-column,
+.right-column {
+    flex: 1;
+    padding: 20px;
+    background-color: #2d2d2d;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    color: white; 
+}
+.left-column {
+    margin-right: 20px; 
+}
+.upcoming-matches {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.upcoming-matches li {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #333; 
+    border-radius: 4px;
+}
+.upcoming-matches li span {
+    font-weight: bold;
+    color: #fff;
+}
+.golden-border {
+    border-color: #D4AF37; /* Golden color */
+    border-width: 2px;
+    border-style: solid;
+    padding: 1rem; 
+    margin-bottom: 2rem; 
+}
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background-color: #1a202c;
+    margin-bottom: 1rem;
+}
+
+.leaderboard-item .rank {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #D4AF37;
+    margin-right: 1rem;
+}
+
+.leaderboard-item .username {
+    font-size: 1.25rem;
+    color: #fff;
+}
+
+.predictions-item {
+    background-color: #1a202c;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.predictions-item .match {
+    font-size: 1.25rem;
+    color: #D4AF37;
+    margin-bottom: 0.5rem;
+}
+
+.predictions-item .outcome {
+    color: #fff;
+}
