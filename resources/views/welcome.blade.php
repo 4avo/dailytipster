@@ -8,68 +8,30 @@
             @endauth
         </nav>
     </div>
- <div class="mt-24 flex">
-    <div class="w-1/4 px-4">
-        <h2 class="text-white text-xl mb-4">LEADERBOARD</h2>
-        @foreach ($users as $user)
-            <div class="leaderboard-item left {{ $loop->first ? 'leader' : ($loop->iteration == 2 ? 'runner-up' : '') }}">
-                <span class="rank">
-                    @if($loop->first)
-                        Leader
-                    @elseif($loop->iteration == 2)
-                        Runner-up
-                    @else
-                        {{ $loop->iteration . '.' }}
-                    @endif
-                </span>
-                <span class="username">{{ $user->name }}</span>
-                @if($loop->first)
-                    <div class="stars">
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="star"></div>
-                    </div>
-                @endif
-            </div>
-        @endforeach
-    </div>
-        <section class="main-content w-1/2 px-4">
-            <div class="feature mb-4">
-                <h2>Compete and win</h2>
-                <p>Our website is a challenge for every football fan. If you want to compete with others and win exclusive rewards, join us now and start predicting the outcomes of the upcoming matches.</p>
-                <img src="{{ asset('images/compete.png') }}" alt="Profile pic" class="w-full h-full object-cover">
-            </div>
-
-            <div class="feature mb-4">
-                <h2>Our Mission</h2>
-                <p>Our application allows users to compete against each other by predicting football match outcomes. We've created a platform that offers a safe and enjoyable alternative to traditional betting, encouraging sports enthusiasts to test their prediction skills in a friendly, competitive environment. By promoting strategic thinking and sports knowledge, we aim to help users make informed predictions and foster a community of passionate football fans.</p>
-                <img src="{{ asset('images/leagues.png') }}" alt="Profile pic" class="w-full h-full object-cover">
-            </div>
-
-            <div class="feature mb-4">
-                <h2>Join Our Community</h2>
-                <p>Explore our curated collection and join a community of fashion enthusiasts who appreciate the artistry behind each piece.</p>
-                <a href="/join" class="text-lg md:text-xl text-yellow-400 hover:text-white border-2 border-yellow-400 py-2 px-4 rounded-full transition duration-300 ease-in-out hover:bg-yellow-400 mt-4 inline-block">Start Exploring</a>
-            </div>
-        </section>
-
+    <div class="mt-24 flex">
         <div class="w-1/4 px-4">
-            <h2 class="text-white text-xl mb-4">Today's Top Predictions</h2>
-            <div class="predictions-item">
-                <div class="match">Team A vs. Team B</div>
-                <div class="outcome">Prediction: Team A wins</div>
-            </div>
-            <div class="predictions-item">
-                <div class="match">Team C vs. Team D</div>
-                <div class="outcome">Prediction: Draw</div>
-            </div>
-            <div class="predictions-item">
-                <div class="match">Team E vs. Team F</div>
-                <div class="outcome">Prediction: Team F wins</div>
-            </div>
+            <h2 class="text-white text-3xl font-extrabold mb-4 tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">LEADERBOARD</h2>
+            @foreach ($users as $user)
+                <div class="leaderboard-item left {{ $loop->first ? 'leader' : ($loop->iteration == 2 ? 'runner-up' : '') }} mb-2 p-4 border border-gray-500 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out">
+                    <span class="rank text-yellow-400 text-lg font-semibold">
+                        @if($loop->first)
+                            Leader
+                        @elseif($loop->iteration == 2)
+                            Runner-up
+                        @else
+                            {{ $loop->iteration . '.' }}
+                        @endif
+                    </span>
+                    <span class="username text-white text-xl ml-2">{{ $user->username }}</span>
+                    @if($loop->first)
+                        <div class="stars flex mt-2">
+                            @for ($i = 0; $i < 5; $i++)
+                                <div class="star w-6 h-6 bg-yellow-400 rounded-full mx-1"></div>
+                            @endfor
+                        </div>
+                    @endif
+                </div>
+            @endforeach
         </div>
-    </main>
- </div>
+    </div>
 </x-main>

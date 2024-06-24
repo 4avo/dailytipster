@@ -30,18 +30,6 @@
 .animated-header {
     animation: slideLeft 1s ease-out;
 }
-
-.main-content {
-    max-width: 800px;
-    margin: 40px auto; 
-    padding: 20px;
-    text-align: center;
-    background-color: #2d2d2d; 
-    color: white; 
-    border-radius: 8px; 
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
-}
-
 .feature {
     margin-bottom: 40px;
 }

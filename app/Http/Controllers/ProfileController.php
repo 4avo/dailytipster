@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
+use PyaeSoneAung\SportmonksFootballApi\SportmonksFootballApi;
 
 class ProfileController extends Controller
 {

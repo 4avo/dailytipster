@@ -26,8 +26,5 @@
         </div>
     </header>
     {{ $slot }}
-    <footer class="bg-gray-800 text-white p-4 mt-6 text-center">
-        <p>&copy; 2024 Our Website. All rights reserved.</p>
-    </footer>
 </body>
 </html>
