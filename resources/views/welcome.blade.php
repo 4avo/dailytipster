@@ -8,17 +8,33 @@
             @endauth
         </nav>
     </div>
- <div class="mt-24 flex"> <!-- Adjust the top margin to account for the fixed header -->
-        <div class="w-1/4 px-4">
-            <h2 class="text-white text-xl mb-4">Our top predictors</h2>
-            @foreach ($users as $user)
-                <div class="leaderboard-item left">
-                    <span class="rank">{{ $loop->iteration }}.</span>
-                    <span class="username">{{ $user->name }}</span>
-                </div>
-            @endforeach
-        </div>
-
+ <div class="mt-24 flex">
+    <div class="w-1/4 px-4">
+        <h2 class="text-white text-xl mb-4">LEADERBOARD</h2>
+        @foreach ($users as $user)
+            <div class="leaderboard-item left {{ $loop->first ? 'leader' : ($loop->iteration == 2 ? 'runner-up' : '') }}">
+                <span class="rank">
+                    @if($loop->first)
+                        Leader
+                    @elseif($loop->iteration == 2)
+                        Runner-up
+                    @else
+                        {{ $loop->iteration . '.' }}
+                    @endif
+                </span>
+                <span class="username">{{ $user->name }}</span>
+                @if($loop->first)
+                    <div class="stars">
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                    </div>
+                @endif
+            </div>
+        @endforeach
+    </div>
         <section class="main-content w-1/2 px-4">
             <div class="feature mb-4">
                 <h2>Compete and win</h2>
