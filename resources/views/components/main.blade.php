@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DailyTipster</title>
+    <title>Daily Tipster</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png')}}">
@@ -11,9 +11,8 @@
 <body class="bg-gray-800">
     <header class="bg-gray-800 text-white p-4 flex justify-between items-center fixed top-0 left-0 w-full z-10 shadow-md">
         <h1 class="text-4xl font-extrabold tracking-wide animated-header flex items-center space-x-2">   
-            <span class="text-yellow-400 md:text-4xl">RACK$</span>
-            <span class="text-yellow-400"> IN </span>
-            <span class="text-yellow-400">BAGS</span>
+            <span class="text-yellow-400 md:text-4xl">Daily</span>
+            <span class="text-yellow-400"> Tipster </span>
         </h1>
         <div class="flex items-center">
             <nav>

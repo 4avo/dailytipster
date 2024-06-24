@@ -3,13 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Redirect;
-use App\Http\Requests\ProfileUpdateRequest;
-use PyaeSoneAung\SportmonksFootballApi\SportmonksFootballApi;
+use Illuminate\View\View;
+use App\Http\Controllers\SportmonksApiController;
 
 class ProfileController extends Controller
 {
@@ -36,7 +32,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**
@@ -57,12 +53,21 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return redirect()->to('/');
     }
     
-    public function index() {
-        $users = User::all();
-        return view('welcome', compact('users'));
+    /**
+     * Display the welcome page with necessary data.
+     */
+    public function index(SportmonksApiController $sportmonksApiController): View
+    {
+        // Fetch leagues data from Sportmonks API
+        $leaguesResponse = $sportmonksApiController->leagues();
+        $leagues = $leaguesResponse->original; // Assuming response is JSON decoded already
 
+        // Fetch users data (assuming it's required)
+        $users = User::all();
+
+        return view('welcome', compact('leagues', 'users'));
     }
 }
