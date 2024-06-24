@@ -11,8 +11,8 @@
 <body class="bg-gray-800">
     <header class="bg-gray-800 text-white p-4 flex justify-between items-center fixed top-0 left-0 w-full z-10 shadow-md">
         <h1 class="text-4xl font-extrabold tracking-wide animated-header flex items-center space-x-2">   
-            <span class="text-yellow-400 md:text-4xl">Daily</span>
-            <span class="text-yellow-400"> Tipster </span>
+            <a href="/"><span class="text-yellow-400 md:text-4xl">Daily</span>
+            <span class="text-yellow-400"> Tipster </span></a>
         </h1>
         <div class="flex items-center">
             <nav>

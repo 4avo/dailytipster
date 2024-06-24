@@ -2,34 +2,35 @@
     <div class="flex items-center">
         <nav>
             @auth
-            @php
-                $loggedInUsername = auth()->user()->username;
-                $isInLeaderboard = false;
-            @endphp
+                @php
+                    $loggedInUsername = auth()->user()->username;
+                    $isInLeaderboard = false;
+                @endphp
 
-            @foreach ($users as $user)
-                @if ($user->username === $loggedInUsername)
-                    @php $isInLeaderboard = true; @endphp
-                    <a href="/profile" class="text-lg md:text-xl text-yellow-400 hover:text-white border-2 border-yellow-400 py-2 px-4 rounded-full transition duration-300 ease-in-out hover:bg-yellow-400">
-                        {{ $user->username }} (Username: Me)
+                @foreach ($users as $user)
+                    @if ($user->username === $loggedInUsername)
+                        @php $isInLeaderboard = true; @endphp
+                        <a href="/profile" class="text-lg md:text-xl text-yellow-400 hover:text-white border-2 border-yellow-400 py-2 px-4 rounded-full transition duration-300 ease-in-out hover:bg-yellow-400">
+                            {{ $user->username }} (Username: Me)
+                        </a>
+                        @break
+                    @endif
+                @endforeach
+
+                @unless ($isInLeaderboard)
+                    <a href="/register" class="text-lg md:text-xl text-yellow-400 hover:text-white border-2 border-yellow-400 py-2 px-4 rounded-full transition duration-300 ease-in-out hover:bg-yellow-400">
+                        You are logged in
                     </a>
-                    @break
-                @endif
-            @endforeach
-
-            @unless ($isInLeaderboard)
-                <a href="/register" class="text-lg md:text-xl text-yellow-400 hover:text-white border-2 border-yellow-400 py-2 px-4 rounded-full transition duration-300 ease-in-out hover:bg-yellow-400">
-                    You are logged in
-                </a>
-            @endunless
+                @endunless
 
             @else
-            <a href="/register" class="text-lg md:text-xl text-yellow-400 hover:text-white border-2 border-yellow-400 py-2 px-4 rounded-full transition duration-300 ease-in-out hover:bg-yellow-400">
-                Join us now
-            </a>
+                <a href="/register" class="text-lg md:text-xl text-yellow-400 hover:text-white border-2 border-yellow-400 py-2 px-4 rounded-full transition duration-300 ease-in-out hover:bg-yellow-400">
+                    Join us now
+                </a>
             @endauth
         </nav>
     </div>
+
     <div class="mt-24 flex">
         <!-- Display leaderboard -->
         <div class="w-1/4 px-4">
@@ -63,18 +64,20 @@
             @endforeach
         </div>
 
-
+        <!-- Display Football Leagues -->
         <div class="w-3/4 px-4">
-            <h2 class="text-white text-3xl font-extrabold mb-4 tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">LEAGUES</h2>
-            <div class="league-list grid grid-cols-2 gap-4">
-                @forelse ($leagues['data'] as $league)
-                    <div class="league-item mb-4 p-4 border border-gray-500 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out">
-                        <h3 class="text-yellow-400 text-lg font-semibold">{{ $league['name'] }}</h3>
-                        <!-- Display other league data as needed -->
-                    </div>
-                @empty
-                    <p>No leagues found.</p>
-                @endforelse
+            <h1 class="text-white text-3xl font-extrabold mb-4 tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">Football Leagues</h1>
+            <div class="dropdown">
+                <button class="dropbtn">Select League</button>
+                <div class="dropdown-content">
+                    @if (!empty($leagues['response']))
+                        @foreach($leagues['response'] as $league)
+                            <a href="#">{{ $league['league']['name'] }}</a>
+                        @endforeach
+                    @else
+                        <a href="#">No leagues found</a>
+                    @endif
+                </div>
             </div>
         </div>
     </div>

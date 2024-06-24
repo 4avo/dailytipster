@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SportmonksApiController;
+
 
 Route::get('/', [ProfileController::class, 'index'])->middleware(['auth'])->name('welcome');
 
@@ -17,12 +18,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-Route::controller(SportmonksApiController::class)->group(function () {
-    Route::get('/leagues', 'leagues');
-    Route::get('/leaguesWithCurrentSeason', 'leaguesWithCurrentSeason');
-    Route::get('/seasonTeams', 'seasonTeams');
-    Route::get('/seasonTeamsWithPlayerNames', 'seasonTeamsWithPlayerNames');
-    Route::get('/playerSeasonStatistics', 'playerSeasonStatistics');
-    Route::get('/previousPlayerSeasonStatistics', 'previousPlayerSeasonStatistics');
-});
