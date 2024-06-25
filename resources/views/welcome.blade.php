@@ -1,84 +1,153 @@
-<x-main>
-    <div class="flex items-center">
-        <nav>
-            @auth
-                @php
-                    $loggedInUsername = auth()->user()->username;
-                    $isInLeaderboard = false;
-                @endphp
+<x-app-layout>
+    <div class="min-h-screen bg-black text-white py-12 px-6 flex items-start justify-start">
+        <div class="w-full max-w-lg bg-black rounded-lg shadow-lg p-8">
+            <h1 class="text-4xl font-bold mb-8">Make a prediction</h1>
 
-                @foreach ($users as $user)
-                    @if ($user->username === $loggedInUsername)
-                        @php $isInLeaderboard = true; @endphp
-                        <a href="/profile" class="text-lg md:text-xl text-yellow-400 hover:text-white border-2 border-yellow-400 py-2 px-4 rounded-full transition duration-300 ease-in-out hover:bg-yellow-400">
-                            {{ $user->username }} (Username: Me)
-                        </a>
-                        @break
-                    @endif
-                @endforeach
-
-                @unless ($isInLeaderboard)
-                    <a href="/register" class="text-lg md:text-xl text-yellow-400 hover:text-white border-2 border-yellow-400 py-2 px-4 rounded-full transition duration-300 ease-in-out hover:bg-yellow-400">
-                        You are logged in
-                    </a>
-                @endunless
-
-            @else
-                <a href="/register" class="text-lg md:text-xl text-yellow-400 hover:text-white border-2 border-yellow-400 py-2 px-4 rounded-full transition duration-300 ease-in-out hover:bg-yellow-400">
-                    Join us now
-                </a>
-            @endauth
-        </nav>
-    </div>
-
-    <div class="mt-24 flex">
-        <!-- Display leaderboard -->
-        <div class="w-1/4 px-4">
-            <h2 class="text-white text-3xl font-extrabold mb-4 tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">LEADERBOARD</h2>
-            @foreach ($users as $user)
-                <div class="leaderboard-item left {{ $loop->first ? 'leader' : ($loop->iteration == 2 ? 'runner-up' : '') }} mb-2 p-4 border border-gray-500 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out">
-                    <span class="rank text-yellow-400 text-lg font-semibold">
-                        @if($loop->first)
-                            Leader
-                        @elseif($loop->iteration == 2)
-                            Runner-up
-                        @else
-                            {{ $loop->iteration . '.' }}
-                        @endif
-                    </span>
-                    <span class="username text-white text-xl ml-2">
-                        @if ($user->username === $loggedInUsername)
-                            {{ $user->username }} (You)
-                        @else
-                            {{ $user->username }}
-                        @endif
-                    </span>
-                    @if($loop->first)
-                        <div class="stars flex mt-2">
-                            @for ($i = 0; $i < 5; $i++)
-                                <div class="star w-6 h-6 bg-yellow-400 rounded-full mx-1"></div>
-                            @endfor
+            <!-- Custom Leagues Dropdown -->
+            <div>
+                <label for="leagues" class="block text-lg font-medium mb-2">Leagues:</label>
+                <div class="custom-dropdown relative">
+                    <div class="relative flex items-center">
+                        <div id="leagues-display" class="flex items-center w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+                            <img id="league-logo" src="" alt="" class="w-6 h-6 mr-2 hidden">
+                            <span id="league-name" class="flex-1">Select League</span>
                         </div>
-                    @endif
-                </div>
-            @endforeach
-        </div>
-
-        <!-- Display Football Leagues -->
-        <div class="w-3/4 px-4">
-            <h1 class="text-white text-3xl font-extrabold mb-4 tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">Football Leagues</h1>
-            <div class="dropdown">
-                <button class="dropbtn">Select League</button>
-                <div class="dropdown-content">
-                    @if (!empty($leagues['response']))
-                        @foreach($leagues['response'] as $league)
-                            <a href="#">{{ $league['league']['name'] }}</a>
-                        @endforeach
-                    @else
-                        <a href="#">No leagues found</a>
-                    @endif
+                        <span id="clear-selection" class="ml-2 text-xl cursor-pointer absolute right-3 top-1/2 transform -translate-y-1/2 hidden">&times;</span>
+                    </div>
+                    <div id="leagues-menu" class="custom-dropdown-menu hidden absolute w-full bg-black text-white border border-white rounded-lg mt-1">
+                        <ul id="leagues-list">
+                            @foreach($leagues as $league)
+                                <li class="custom-dropdown-item p-2 flex items-center cursor-pointer" data-value="{{ $league['id'] }}" data-logo="{{ $league['logo'] }}" data-name="{{ $league['name'] }}">
+                                    <img src="{{ $league['logo'] }}" alt="{{ $league['name'] }} logo" class="w-6 h-6 mr-2">
+                                    {{ $league['name'] }}
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
             </div>
+
+            <!-- Other content of the page -->
+            <form class="space-y-6 mt-6">
+                <div>
+                    <label for="home-team" class="block text-lg font-medium mb-2">Home Team:</label>
+                    <select id="home-team" name="home-team" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+                        <option value="" disabled selected>Select Home Team</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="away-team" class="block text-lg font-medium mb-2">Away Team:</label>
+                    <select id="away-team" name="away-team" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+                        <option value="" disabled selected>Select Away Team</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="prediction" class="block text-lg font-medium mb-2">Prediction:</label>
+                    <input type="text" id="prediction" name="prediction" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white" placeholder="Enter your prediction">
+                </div>
+
+                <button type="submit" class="w-full bg-white text-black font-bold py-3 rounded-lg transition duration-300">Submit Prediction</button>
+            </form>
         </div>
     </div>
-</x-main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const leaguesDisplay = document.getElementById('leagues-display');
+            const leagueLogo = document.getElementById('league-logo');
+            const leagueName = document.getElementById('league-name');
+            const leaguesMenu = document.getElementById('leagues-menu');
+            const customDropdownItems = document.querySelectorAll('.custom-dropdown-item');
+            const clearSelection = document.getElementById('clear-selection');
+
+            leaguesDisplay.addEventListener('click', function () {
+                leaguesMenu.classList.toggle('hidden');
+            });
+
+            customDropdownItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    const logo = item.getAttribute('data-logo');
+                    const name = item.getAttribute('data-name');
+                    leagueLogo.src = logo;
+                    leagueLogo.alt = `${name} logo`;
+                    leagueLogo.classList.remove('hidden');
+                    leagueName.textContent = name;
+                    leaguesDisplay.dataset.value = item.dataset.value;
+                    clearSelection.classList.remove('hidden');
+                    leaguesMenu.classList.add('hidden');
+
+                    // Trigger change event for further processing if needed
+                    leaguesDisplay.dispatchEvent(new Event('change'));
+                });
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!leaguesDisplay.contains(event.target) && !leaguesMenu.contains(event.target)) {
+                    leaguesMenu.classList.add('hidden');
+                }
+            });
+
+            leaguesDisplay.addEventListener('change', function () {
+                const leagueId = leaguesDisplay.dataset.value;
+                const homeTeamDropdown = document.getElementById('home-team');
+                const awayTeamDropdown = document.getElementById('away-team');
+
+                homeTeamDropdown.innerHTML = '<option value="" disabled selected>Select Home Team</option>';
+                awayTeamDropdown.innerHTML = '<option value="" disabled selected>Select Away Team</option>';
+
+                if (leagueId) {
+                    fetch(`/api/teams?league_id=${leagueId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const teams = data.teams;
+                            teams.forEach(team => {
+                                const option = document.createElement('option');
+                                option.value = team.id;
+                                option.textContent = team.name;
+                                homeTeamDropdown.appendChild(option.cloneNode(true));
+                                awayTeamDropdown.appendChild(option);
+                            });
+                        })
+                        .catch(error => console.error('Error fetching teams:', error));
+                }
+            });
+
+            clearSelection.addEventListener('click', function () {
+                leagueLogo.classList.add('hidden');
+                leagueName.textContent = 'Select League';
+                leaguesDisplay.removeAttribute('data-value');
+                clearSelection.classList.add('hidden');
+
+                // Trigger change event for further processing if needed
+                leaguesDisplay.dispatchEvent(new Event('change'));
+            });
+        });
+    </script>
+
+    <style>
+        .custom-dropdown {
+            position: relative;
+        }
+
+        .custom-dropdown-menu {
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .custom-dropdown-item:hover {
+            background-color: #333;
+        }
+
+        #leagues-display {
+            background: none;
+            border: none;
+            color: white;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</x-app-layout>

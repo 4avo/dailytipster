@@ -6,10 +6,13 @@ use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\ProfileUpdateRequest;
 
 class ProfileController extends Controller
 {
-     /**
+    /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
@@ -55,32 +58,23 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
     public function index()
     {
         // Fetch users from the database
         $users = User::all();
 
-        // Create a Guzzle HTTP client instance
-        $client = new Client();
+        // Load leagues data from the new JSON file
+        $leaguesData = json_decode(file_get_contents(storage_path('app/leagues.json')), true);
 
-        try {
-            // Make a GET request to the API endpoint
-            $response = $client->request('GET', 'https://api-football-v1.p.rapidapi.com/v3/leagues', [
-                'headers' => [
-                    'x-rapidapi-host' => 'api-football-v1.p.rapidapi.com',
-                    'x-rapidapi-key' => 'fcf3c2a832msh24812e500083af3p14b6fejsn3c909a197fa8',
-                ],
-            ]);
-
-            // Get the response body and decode it from JSON to an array
-            $leagues = json_decode($response->getBody(), true);
-
-        } catch (\Exception $e) {
-            // Handle any exceptions (e.g., API not reachable, authentication error)
-            $leagues = [];
-            // Log the error
-            \Log::error('Error fetching leagues: ' . $e->getMessage());
-        }
+        // Parse leagues data
+        $leagues = array_map(function ($leagueData) {
+            return [
+                'id' => $leagueData['league']['id'],
+                'name' => $leagueData['league']['name'],
+                'logo' => $leagueData['league']['logo'],
+            ];
+        }, $leaguesData);
 
         // Pass users and leagues data to the view
         return view('welcome', compact('users', 'leagues'));
