@@ -1,0 +1,25 @@
+services:
+  server: 
+    image: my-app:latest
+    ports:
+      -   80:80
+    environment:
+      - MYSQL_DATABASE=dailytipster_db
+      - MYSQL_HOST=mysql
+      - MYSQL_PASSWORD=root
+      - MYSQL_USER=root
+    depends_on:
+      - mysql
+    volumes:
+      - ./:/var/www/html
+  mysql:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=dailytipster_db
+    ports:
+      -   3306:3306
+    volumes:
+      - volumche:/var/lib/mysql
+volumes:
+  volumche:
