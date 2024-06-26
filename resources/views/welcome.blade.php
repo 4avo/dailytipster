@@ -1,7 +1,26 @@
+<!-- resources/views/welcome.blade.php -->
 <x-app-layout>
     <div class="min-h-screen bg-black text-white py-12 px-6 flex items-start justify-start">
-        <div class="w-full max-w-lg bg-black rounded-lg shadow-lg p-8">
+        <form action="{{ route('predictions.store') }}" method="POST" class="w-full max-w-lg bg-black rounded-lg shadow-lg p-8">
+            @csrf
             <h1 class="text-4xl font-bold mb-8">Make a prediction</h1>
+
+            @if(session('success'))
+                <div x-data="{ show: true }" x-show="show" x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 transform scale-90"
+                     x-transition:enter-end="opacity-100 transform scale-100"
+                     x-transition:leave="transition ease-in duration-300"
+                     x-transition:leave-start="opacity-100 transform scale-100"
+                     x-transition:leave-end="opacity-0 transform scale-90"
+                     class="bg-green-500 text-white p-4 rounded-lg mb-8 relative">
+                    {{ session('success') }}
+                    <button type="button" @click="show = false" class="absolute top-0 right-0 mt-2 mr-2 text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            @endif
 
             <!-- Custom Leagues Dropdown -->
             <div>
@@ -18,9 +37,9 @@
                     <div id="leagues-menu" class="custom-dropdown-menu hidden absolute w-full bg-black text-white border border-white rounded-lg mt-1">
                         <ul id="leagues-list">
                             @foreach($leagues as $league)
-                                <li class="custom-dropdown-item p-2 flex items-center cursor-pointer" 
-                                    data-value="{{ $league['id'] }}" 
-                                    data-logo="{{ $league['logo'] }}" 
+                                <li class="custom-dropdown-item p-2 flex items-center cursor-pointer"
+                                    data-value="{{ $league['id'] }}"
+                                    data-logo="{{ $league['logo'] }}"
                                     data-name="{{ $league['name'] }}"
                                     data-country-code="{{ $league['country_code'] ?? '' }}"
                                     data-country-flag="{{ $league['country_flag'] ?? '' }}"
@@ -37,7 +56,7 @@
             <!-- Home Team Dropdown -->
             <div class="mt-6">
                 <label for="home-team" class="block text-lg font-medium mb-2">Home Team:</label>
-                <select id="home-team" name="home-team" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+                <select id="home-team" name="home_team" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
                     <option value="" disabled selected>Select Home Team</option>
                 </select>
             </div>
@@ -45,7 +64,7 @@
             <!-- Away Team Dropdown -->
             <div class="mt-6">
                 <label for="away-team" class="block text-lg font-medium mb-2">Away Team:</label>
-                <select id="away-team" name="away-team" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+                <select id="away-team" name="away_team" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
                     <option value="" disabled selected>Select Away Team</option>
                 </select>
             </div>
@@ -66,7 +85,7 @@
 
             <!-- Submit Button -->
             <button type="submit" class="w-full bg-white text-black font-bold py-3 rounded-lg transition duration-300 mt-6">Submit Prediction</button>
-        </div>
+        </form>
     </div>
 
     <script>
@@ -168,103 +187,107 @@
                     predictionInput.value = this.getAttribute('data-value');
                 });
             });
+                           // Tooltip functionality
+                           document.addEventListener('mouseover', function (event) {
+                   if (event.target.matches('[data-tooltip]')) {
+                       const tooltipText = event.target.dataset.tooltip;
+                       const tooltip = document.createElement('div');
+                       tooltip.className = 'custom-tooltip';
+                       tooltip.textContent = tooltipText;
+                       document.body.appendChild(tooltip);
 
-            // Tooltip functionality
-            document.addEventListener('mouseover', function (event) {
-                if (event.target.matches('[data-tooltip]')) {
-                    const tooltipText = event.target.dataset.tooltip;
-                    const tooltip = document.createElement('div');
-                    tooltip.className = 'custom-tooltip';
-                    tooltip.textContent = tooltipText;
-                    document.body.appendChild(tooltip);
+                       const rect = event.target.getBoundingClientRect();
+                       tooltip.style.left = `${rect.left + window.scrollX}px`;
+                       tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight - 5}px`;
 
-                    const rect = event.target.getBoundingClientRect();
-                    tooltip.style.left = `${rect.left + window.scrollX}px`;
-                    tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight - 5}px`;
+                       event.target.addEventListener('mouseleave', function () {
+                           tooltip.remove();
+                       }, { once: true });
+                   }
+               });
+           });
+       </script>
 
-                    event.target.addEventListener('mouseleave', function () {
-                        tooltip.remove();
-                    }, { once: true });
-                }
-            });
-        });
-    </script>
+       <style>
+           .custom-dropdown {
+               position: relative;
+           }
 
-    <style>
-        .custom-dropdown {
-            position: relative;
-        }
+           .custom-dropdown-menu {
+               max-height: 200px;
+               overflow-y: auto;
+               z-index: 10;
+           }
 
-        .custom-dropdown-menu {
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 10;
-        }
+           .custom-dropdown-item:hover {
+               background-color: #333;
+           }
 
-        .custom-dropdown-item:hover {
-            background-color: #333;
-        }
+           #leagues-display {
+               background: none;
+               border: none;
+               color: white;
+               width: 100%;
+               display: flex;
+               align-items: center;
+           }
 
-        #leagues-display {
-            background: none;
-            border: none;
-            color: white;
-            width: 100%;
-            display: flex;
-            align-items: center;
-        }
+           #country-code {
+               margin-left: 1rem; /* Adjust margin to move the country code to the left */
+           }
 
-        #country-code {
-            margin-left: 1rem; /* Adjust margin to move the country code to the left */
-        }
+           #country-flag {
+               margin-left: 0.5rem; /* Adjust margin to move the flag to the left */
+           }
 
-        #country-flag {
-            margin-left: 0.5rem; /* Adjust margin to move the flag to the left */
-        }
+           /* Custom Tooltip Styles */
+           .custom-tooltip {
+               position: absolute;
+               background-color: #333;
+               color: #fff;
+               padding: 5px 10px;
+               border-radius: 4px;
+               font-size: 12px;
+               z-index: 1000;
+           }
 
-        /* Custom Tooltip Styles */
-        .custom-tooltip {
-            position: absolute;
-            background-color: #333;
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            z-index: 1000;
-        }
+           /* Prediction Button Styles */
+           .prediction-button {
+               background-color: #333;
+               color: white;
+               border: 2px solid white;
+               border-radius: 0.375rem;
+               padding: 0.75rem 1.5rem;
+               cursor: pointer;
+               transition: background-color 0.3s, transform 0.3s;
+               flex: 1 1 calc(33% - 1rem); /* Allow buttons to wrap */
+               margin: 0.5rem;
+               text-align: center;
+           }
 
-        /* Prediction Button Styles */
-        .prediction-button {
-            background-color: #333;
-            color: white;
-            border: 2px solid white;
-            border-radius: 0.375rem;
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-            flex: 1 1 calc(33% - 1rem); /* Allow buttons to wrap */
-            margin: 0.5rem;
-            text-align: center;
-        }
+           .prediction-button:hover {
+               background-color: white;
+               color: black;
+               transform: scale(1.05);
+           }
 
-        .prediction-button:hover {
-            background-color: white;
-            color: black;
-            transform: scale(1.05);
-        }
+           .prediction-button.active {
+               background-color: #FFD700; /* Gold color for active button */
+               border-color: #FFD700; /* Match border color */
+               color: black;
+               transform: scale(1.1); /* Slightly larger */
+           }
 
-        .prediction-button.active {
-            background-color: #FFD700; /* Gold color for active button */
-            border-color: #FFD700; /* Match border color */
-            color: black;
-            transform: scale(1.1); /* Slightly larger */
-        }
+           /* Flex container for prediction buttons */
+           #prediction-options {
+               display: flex;
+               flex-wrap: wrap;
+               justify-content: center;
+           }
 
-        /* Flex container for prediction buttons */
-        #prediction-options {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-    </style>
-</x-app-layout>
+           /* Success message animation */
+           [x-cloak] {
+               display: none;
+           }
+       </style>
+   </x-app-layout>
