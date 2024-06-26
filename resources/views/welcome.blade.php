@@ -11,13 +11,20 @@
                         <div id="leagues-display" class="flex items-center w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
                             <img id="league-logo" src="" alt="" class="w-6 h-6 mr-2 hidden">
                             <span id="league-name" class="flex-1">Select League</span>
+                            <span id="country-code" class="ml-2 hidden"></span>
+                            <img id="country-flag" src="" alt="" class="w-6 h-6 ml-1 hidden" data-tooltip="">
                         </div>
-                        <span id="clear-selection" class="ml-2 text-xl cursor-pointer absolute right-3 top-1/2 transform -translate-y-1/2 hidden">&times;</span>
                     </div>
                     <div id="leagues-menu" class="custom-dropdown-menu hidden absolute w-full bg-black text-white border border-white rounded-lg mt-1">
                         <ul id="leagues-list">
                             @foreach($leagues as $league)
-                                <li class="custom-dropdown-item p-2 flex items-center cursor-pointer" data-value="{{ $league['id'] }}" data-logo="{{ $league['logo'] }}" data-name="{{ $league['name'] }}">
+                                <li class="custom-dropdown-item p-2 flex items-center cursor-pointer" 
+                                    data-value="{{ $league['id'] }}" 
+                                    data-logo="{{ $league['logo'] }}" 
+                                    data-name="{{ $league['name'] }}"
+                                    data-country-code="{{ $league['country_code'] ?? '' }}"
+                                    data-country-flag="{{ $league['country_flag'] ?? '' }}"
+                                    data-country-name="{{ $league['country_name'] ?? '' }}">
                                     <img src="{{ $league['logo'] }}" alt="{{ $league['name'] }} logo" class="w-6 h-6 mr-2">
                                     {{ $league['name'] }}
                                 </li>
@@ -27,29 +34,38 @@
                 </div>
             </div>
 
-            <!-- Other content of the page -->
-            <form class="space-y-6 mt-6">
-                <div>
-                    <label for="home-team" class="block text-lg font-medium mb-2">Home Team:</label>
-                    <select id="home-team" name="home-team" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
-                        <option value="" disabled selected>Select Home Team</option>
-                    </select>
-                </div>
+            <!-- Home Team Dropdown -->
+            <div class="mt-6">
+                <label for="home-team" class="block text-lg font-medium mb-2">Home Team:</label>
+                <select id="home-team" name="home-team" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+                    <option value="" disabled selected>Select Home Team</option>
+                </select>
+            </div>
 
-                <div>
-                    <label for="away-team" class="block text-lg font-medium mb-2">Away Team:</label>
-                    <select id="away-team" name="away-team" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
-                        <option value="" disabled selected>Select Away Team</option>
-                    </select>
-                </div>
+            <!-- Away Team Dropdown -->
+            <div class="mt-6">
+                <label for="away-team" class="block text-lg font-medium mb-2">Away Team:</label>
+                <select id="away-team" name="away-team" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+                    <option value="" disabled selected>Select Away Team</option>
+                </select>
+            </div>
 
-                <div>
-                    <label for="prediction" class="block text-lg font-medium mb-2">Prediction:</label>
-                    <input type="text" id="prediction" name="prediction" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white" placeholder="Enter your prediction">
+            <!-- Prediction Options -->
+            <div class="mt-6">
+                <label class="block text-lg font-medium mb-2">Prediction:</label>
+                <div id="prediction-options" class="flex flex-wrap justify-around mt-4">
+                    <button type="button" class="prediction-button" data-value="Team 1 to win">Team 1 to win</button>
+                    <button type="button" class="prediction-button" data-value="Draw">Draw</button>
+                    <button type="button" class="prediction-button" data-value="Team 2 to win">Team 2 to win</button>
+                    <button type="button" class="prediction-button" data-value="Over 2.5 goals">Over 2.5 goals</button>
+                    <button type="button" class="prediction-button" data-value="Under 2.5 goals">Under 2.5 goals</button>
+                    <button type="button" class="prediction-button" data-value="Both teams to score">Both teams to score</button>
                 </div>
+                <input type="hidden" name="prediction" id="prediction-input">
+            </div>
 
-                <button type="submit" class="w-full bg-white text-black font-bold py-3 rounded-lg transition duration-300">Submit Prediction</button>
-            </form>
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-white text-black font-bold py-3 rounded-lg transition duration-300 mt-6">Submit Prediction</button>
         </div>
     </div>
 
@@ -58,9 +74,16 @@
             const leaguesDisplay = document.getElementById('leagues-display');
             const leagueLogo = document.getElementById('league-logo');
             const leagueName = document.getElementById('league-name');
+            const countryCode = document.getElementById('country-code');
+            const countryFlag = document.getElementById('country-flag');
             const leaguesMenu = document.getElementById('leagues-menu');
             const customDropdownItems = document.querySelectorAll('.custom-dropdown-item');
-            const clearSelection = document.getElementById('clear-selection');
+            const homeTeamDropdown = document.getElementById('home-team');
+            const awayTeamDropdown = document.getElementById('away-team');
+            const predictionButtons = document.querySelectorAll('.prediction-button');
+            const predictionInput = document.getElementById('prediction-input');
+
+            const teamsData = @json($teamsData); // Include teams data from the controller
 
             leaguesDisplay.addEventListener('click', function () {
                 leaguesMenu.classList.toggle('hidden');
@@ -70,13 +93,46 @@
                 item.addEventListener('click', function () {
                     const logo = item.getAttribute('data-logo');
                     const name = item.getAttribute('data-name');
+                    const code = item.getAttribute('data-country-code');
+                    const flag = item.getAttribute('data-country-flag');
+                    const countryName = item.getAttribute('data-country-name');
+                    
                     leagueLogo.src = logo;
                     leagueLogo.alt = `${name} logo`;
                     leagueLogo.classList.remove('hidden');
+                    
                     leagueName.textContent = name;
+                    
+                    if (code) {
+                        countryCode.textContent = code;
+                        countryCode.classList.remove('hidden');
+                    } else {
+                        countryCode.classList.add('hidden');
+                    }
+                    
+                    if (flag) {
+                        countryFlag.src = flag;
+                        countryFlag.alt = `${code} flag`;
+                        countryFlag.dataset.tooltip = countryName; // Use data attribute for custom tooltip
+                        countryFlag.classList.remove('hidden');
+                    } else {
+                        countryFlag.classList.add('hidden');
+                    }
+                    
                     leaguesDisplay.dataset.value = item.dataset.value;
-                    clearSelection.classList.remove('hidden');
                     leaguesMenu.classList.add('hidden');
+
+                    // Update home and away team dropdowns
+                    const leagueTeams = teamsData[name] || [];
+                    homeTeamDropdown.innerHTML = '<option value="" disabled selected>Select Home Team</option>';
+                    awayTeamDropdown.innerHTML = '<option value="" disabled selected>Select Away Team</option>';
+                    leagueTeams.forEach(team => {
+                        const option = document.createElement('option');
+                        option.value = team;
+                        option.textContent = team;
+                        homeTeamDropdown.appendChild(option.cloneNode(true));
+                        awayTeamDropdown.appendChild(option);
+                    });
 
                     // Trigger change event for further processing if needed
                     leaguesDisplay.dispatchEvent(new Event('change'));
@@ -89,39 +145,47 @@
                 }
             });
 
-            leaguesDisplay.addEventListener('change', function () {
-                const leagueId = leaguesDisplay.dataset.value;
-                const homeTeamDropdown = document.getElementById('home-team');
-                const awayTeamDropdown = document.getElementById('away-team');
+            // Disable same team in the other dropdown
+            function disableSameTeam(selectedTeam, targetDropdown) {
+                Array.from(targetDropdown.options).forEach(option => {
+                    option.disabled = option.value === selectedTeam;
+                });
+            }
 
-                homeTeamDropdown.innerHTML = '<option value="" disabled selected>Select Home Team</option>';
-                awayTeamDropdown.innerHTML = '<option value="" disabled selected>Select Away Team</option>';
-
-                if (leagueId) {
-                    fetch(`/api/teams?league_id=${leagueId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            const teams = data.teams;
-                            teams.forEach(team => {
-                                const option = document.createElement('option');
-                                option.value = team.id;
-                                option.textContent = team.name;
-                                homeTeamDropdown.appendChild(option.cloneNode(true));
-                                awayTeamDropdown.appendChild(option);
-                            });
-                        })
-                        .catch(error => console.error('Error fetching teams:', error));
-                }
+            homeTeamDropdown.addEventListener('change', function () {
+                disableSameTeam(this.value, awayTeamDropdown);
             });
 
-            clearSelection.addEventListener('click', function () {
-                leagueLogo.classList.add('hidden');
-                leagueName.textContent = 'Select League';
-                leaguesDisplay.removeAttribute('data-value');
-                clearSelection.classList.add('hidden');
+            awayTeamDropdown.addEventListener('change', function () {
+                disableSameTeam(this.value, homeTeamDropdown);
+            });
 
-                // Trigger change event for further processing if needed
-                leaguesDisplay.dispatchEvent(new Event('change'));
+            // Prediction button click event
+            predictionButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    predictionButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    predictionInput.value = this.getAttribute('data-value');
+                });
+            });
+
+            // Tooltip functionality
+            document.addEventListener('mouseover', function (event) {
+                if (event.target.matches('[data-tooltip]')) {
+                    const tooltipText = event.target.dataset.tooltip;
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'custom-tooltip';
+                    tooltip.textContent = tooltipText;
+                    document.body.appendChild(tooltip);
+
+                    const rect = event.target.getBoundingClientRect();
+                    tooltip.style.left = `${rect.left + window.scrollX}px`;
+                    tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight - 5}px`;
+
+                    event.target.addEventListener('mouseleave', function () {
+                        tooltip.remove();
+                    }, { once: true });
+                }
             });
         });
     </script>
@@ -148,6 +212,59 @@
             width: 100%;
             display: flex;
             align-items: center;
+        }
+
+        #country-code {
+            margin-left: 1rem; /* Adjust margin to move the country code to the left */
+        }
+
+        #country-flag {
+            margin-left: 0.5rem; /* Adjust margin to move the flag to the left */
+        }
+
+        /* Custom Tooltip Styles */
+        .custom-tooltip {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        /* Prediction Button Styles */
+        .prediction-button {
+            background-color: #333;
+            color: white;
+            border: 2px solid white;
+            border-radius: 0.375rem;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            flex: 1 1 calc(33% - 1rem); /* Allow buttons to wrap */
+            margin: 0.5rem;
+            text-align: center;
+        }
+
+        .prediction-button:hover {
+            background-color: white;
+            color: black;
+            transform: scale(1.05);
+        }
+
+        .prediction-button.active {
+            background-color: #FFD700; /* Gold color for active button */
+            border-color: #FFD700; /* Match border color */
+            color: black;
+            transform: scale(1.1); /* Slightly larger */
+        }
+
+        /* Flex container for prediction buttons */
+        #prediction-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
         }
     </style>
 </x-app-layout>
