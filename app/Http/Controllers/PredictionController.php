@@ -34,12 +34,15 @@ class PredictionController extends Controller
         ]);
 
         // Create a new prediction
-        $prediction = new Prediction();
-        $prediction->user_id = Auth::id();
-        $prediction->home_team = $request->home_team;
-        $prediction->away_team = $request->away_team;
-        $prediction->prediction = $request->prediction;
-        $prediction->save();
+        // Create a new prediction
+    $prediction = new Prediction();
+    $prediction->user_id = Auth::id();
+    $prediction->home_team = $request->home_team;
+    $prediction->away_team = $request->away_team;
+    $prediction->prediction = $request->prediction;
+    $prediction->description = $request->description;
+    $prediction->probability = $request->probability;
+    $prediction->save();
 
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Prediction saved successfully. Please wait while we approve your prediction.');

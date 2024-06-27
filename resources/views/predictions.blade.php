@@ -21,6 +21,12 @@
                                             <div class="text-gray-300 mt-2">
                                                 {{ $prediction->prediction }}
                                             </div>
+                                            <div class="text-gray-300 mt-2">
+                                                {{ $prediction->probability }}
+                                            </div>
+                                            <div class="text-gray-300 mt-2">
+                                                {{ $prediction->description }}
+                                            </div>
                                             <div class="text-gray-500 text-sm mt-2">
                                                 Created on: {{ $prediction->created_at->format('F j, Y') }}
                                             </div>

@@ -1,202 +1,110 @@
-@keyframes slideLeft {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(0);
-    }
+.custom-dropdown {
+    position: relative;
 }
 
-@keyframes fall {
-    0% {
-        top: -50px;
-        opacity: 0;
-    }
-    100% {
-        top: 100%;
-        opacity: 1;
-    }
+.custom-dropdown-menu {
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
 }
 
-@keyframes shimmer {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+.custom-dropdown-item:hover {
+    background-color: #333;
 }
 
-.animated-header {
-    animation: slideLeft 1s ease-out;
-}
-.feature {
-    margin-bottom: 40px;
-}
-
-.feature h2 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.feature p {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: #ddd;
-}
-
-.feature img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin-top: 20px;
-}
-
-.left-column,
-.right-column {
-    flex: 1;
-    padding: 20px;
-    background-color: #2d2d2d;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
-    color: white; 
-}
-
-.left-column {
-    margin-right: 20px; 
-}
-
-
-
-.golden-border {
-    border-color: #D4AF37; /* Golden color */
-    border-width: 2px;
-    border-style: solid;
-    padding: 1rem; 
-    margin-bottom: 2rem; 
-}
-
-.leaderboard-item {
+#leagues-display {
+    background: none;
+    border: none;
+    color: white;
+    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    background-color: #1a202c;
-    margin-bottom: 1rem;
-    position: relative; /* For star container positioning */
-    color: white; /* Ensure non-leader text is white */
 }
 
-.leaderboard-item .rank {
-    font-size: 1.5rem;
-    font-weight: bold;
+/* Prediction Button Styles */
+.prediction-button {
+    background-color: #333;
     color: white;
-    margin-right: 1rem;
-}
-
-.leaderboard-item .username {
-    font-size: 1.25rem;
-    color: white;
-}
-
-.leaderboard-item.leader {
-    background-color: gold;
-    color: black; /* Leader text color is black */
-    font-weight: bold;
-    position: relative;
-    overflow: hidden; /* For star animation overflow */
-}
-
-.leaderboard-item.runner-up {
-    background-color: blue; /* Runner-up background color */
-}
-
-.leaderboard-item.leader .rank, 
-.leaderboard-item.leader .username {
-    color: black; /* Ensure leader text is black */
-}
-
-.leaderboard-item.leader .stars {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    transform: translateX(-50%);
-}
-
-.star {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background-color: white;
-    border-radius: 50%;
-    animation: fall 3s linear infinite, shimmer 2s infinite;
-    opacity: 0;
-}
-
-.star:nth-child(1) { left: 20%; animation-delay: 0s; }
-.star:nth-child(2) { left: 40%; animation-delay: 0.5s; }
-.star:nth-child(3) { left: 60%; animation-delay: 1s; }
-.star:nth-child(4) { left: 80%; animation-delay: 1.5s; }
-.star:nth-child(5) { left: 50%; animation-delay: 2s; }
-
-@keyframes shimmer {
-    0% {
-        color: white;
-    }
-    50% {
-        color: gold;
-    }
-    100% {
-        color: white;
-    }
-}
-.animated-header:hover {
-    text-decoration: underline;
-    color: #D4AF37;
-}
-
-/* CSS for the dropdown menu */
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropbtn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px;
-    font-size: 16px;
-    border: none;
+    border: 2px solid white;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1.5rem;
     cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    flex: 1 1 calc(33% - 1rem); /* Allow buttons to wrap */
+    margin: 0.5rem;
+    text-align: center;
 }
 
-.dropbtn:hover, .dropbtn:focus {
-    background-color: #3e8e41;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
+.prediction-button:hover {
+    background-color: white;
     color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
+    transform: scale(1.05);
 }
 
-.dropdown-content a:hover {background-color: #f1f1f1;}
+.prediction-button.active {
+    background-color: #FFD700; /* Gold color for active button */
+    border-color: #FFD700; /* Match border color */
+    color: black;
+    transform: scale(1.1); /* Slightly larger */
+}
 
-.dropdown:hover .dropdown-content {display: block;}
+/* Flex container for prediction buttons */
+#prediction-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
 
-.dropdown:hover .dropbtn {background-color: #3e8e41;}
+/* Success message animation */
+[x-cloak] {
+    display: none;
+}
+
+/* Random Predictions styling */
+.random-prediction {
+    background-color: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.random-prediction:hover {
+    background-color: #2d3748;
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.random-prediction p {
+    margin: 0;
+}
+
+.random-prediction .username {
+    font-weight: bold;
+}
+
+.random-prediction .time-ago {
+    color: #9CA3AF;
+    font-size: 0.875rem;
+}
+
+.bg-gradient-to-r {
+    background-image: linear-gradient(to right, #6b46c1, #d53f8c, #ed64a6);
+}
+
+.shadow-lg {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-xl {
+    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.2);
+}
+
+.transform {
+    transform: scale(1);
+}
+
+.transition {
+    transition: all 0.3s ease-in-out;
+}

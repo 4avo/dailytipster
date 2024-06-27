@@ -15,6 +15,8 @@ return new class extends Migration
             $table->string('home_team');
             $table->string('away_team');
             $table->string('prediction');
+            $table->string('description');
+            $table->string('probability');
             $table->string('status')->default('Pending'); // Set default status
             $table->timestamps(); // Includes created_at and updated_at columns
         });
