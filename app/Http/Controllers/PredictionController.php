@@ -1,6 +1,4 @@
 <?php
-// database/migrations/create_predictions_table.php
-// app/Http/Controllers/PredictionController.php
 namespace App\Http\Controllers;
 
 use App\Models\Prediction;

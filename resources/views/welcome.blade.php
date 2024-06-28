@@ -3,7 +3,7 @@
     <div class="min-h-screen bg-black text-white py-12 px-6 flex">
         <!-- Prediction Form -->
         <div class="flex-1 flex flex-col">
-            <form action="{{ route('predictions.store') }}" method="POST" class="w-full max-w-lg bg-black rounded-lg shadow-lg p-8 flex-grow">
+            <form id="prediction-form" action="{{ route('predictions.store') }}" method="POST" class="w-full max-w-lg bg-black rounded-lg shadow-lg p-8 flex-grow">
                 @csrf
                 <h1 class="text-4xl font-bold mb-8">Make a prediction</h1>
 
@@ -21,6 +21,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                         </button>
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div class="bg-red-500 text-white p-4 rounded-lg mb-8">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
                 @endif
 
@@ -78,19 +88,19 @@
                         <button type="button" class="prediction-button" data-value="Under 2.5 goals">Under 2.5 goals</button>
                         <button type="button" class="prediction-button" data-value="Both teams to score">Both teams to score</button>
                     </div>
-                    <input type="hidden" name="prediction" id="prediction-input">
+                    <input type="hidden" name="prediction" id="prediction-input" required>
                 </div>
 
                 <!-- Description Input -->
                 <div class="mt-6">
                     <label for="description" class="block text-lg font-medium mb-2">Description:</label>
-                    <textarea id="description" name="description" rows="4" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"></textarea>
+                    <textarea id="description" name="description" rows="4" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white" required></textarea>
                 </div>
 
                 <!-- Probability Input -->
                 <div class="mt-6">
                     <label for="probability" class="block text-lg font-medium mb-2">Probability (%):</label>
-                    <input type="number" id="probability" name="probability" min="0" max="100" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white">
+                    <input type="number" id="probability" name="probability" min="0" max="100" class="w-full bg-black text-white border border-white p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white" required>
                 </div>
 
                 <!-- Submit Button -->
@@ -139,79 +149,4 @@
             </ul>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const leaguesDisplay = document.getElementById('leagues-display');
-            const leagueLogo = document.getElementById('league-logo');
-            const leagueName = document.getElementById('league-name');
-            const leaguesMenu = document.getElementById('leagues-menu');
-            const customDropdownItems = document.querySelectorAll('.custom-dropdown-item');
-            const homeTeamDropdown = document.getElementById('home-team');
-            const awayTeamDropdown = document.getElementById('away-team');
-            const predictionButtons = document.querySelectorAll('.prediction-button');
-            const predictionInput = document.getElementById('prediction-input');
-
-            leaguesDisplay.addEventListener('click', function () {
-                leaguesMenu.classList.toggle('hidden');
-            });
-
-            customDropdownItems.forEach(item => {
-                item.addEventListener('click', function () {
-                    const logo = item.getAttribute('data-logo');
-                    const name = item.getAttribute('data-name');
-                    const teams = JSON.parse(item.getAttribute('data-teams'));
-
-                    leagueLogo.src = logo;
-                    leagueLogo.alt = `${name} logo`;
-                    leagueLogo.classList.remove('hidden');
-                    
-                    leagueName.textContent = name;
-                    
-                    leaguesDisplay.dataset.value = item.dataset.value;
-                    leaguesMenu.classList.add('hidden');
-
-                    homeTeamDropdown.innerHTML = '<option value="" disabled selected>Select Home Team</option>';
-                    awayTeamDropdown.innerHTML = '<option value="" disabled selected>Select Away Team</option>';
-                    teams.forEach(team => {
-                        const option = document.createElement('option');
-                        option.value = team;
-                        option.textContent = team;
-                        homeTeamDropdown.appendChild(option.cloneNode(true));
-                        awayTeamDropdown.appendChild(option);
-                    });
-
-                    leaguesDisplay.dispatchEvent(new Event('change'));
-                });
-            });
-
-            document.addEventListener('click', function (event) {
-                if (!leaguesDisplay.contains(event.target) && !leaguesMenu.contains(event.target)) {
-                    leaguesMenu.classList.add('hidden');
-                }
-            });
-
-            function disableSameTeam(selectedTeam, targetDropdown) {
-                Array.from(targetDropdown.options).forEach(option => {
-                    option.disabled = option.value === selectedTeam;
-                });
-            }
-
-            homeTeamDropdown.addEventListener('change', function () {
-                disableSameTeam(this.value, awayTeamDropdown);
-            });
-
-            awayTeamDropdown.addEventListener('change', function () {
-                disableSameTeam(this.value, homeTeamDropdown);
-            });
-
-            predictionButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    predictionButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    predictionInput.value = this.getAttribute('data-value');
-                });
-            });
-        });
-    </script>
 </x-app-layout>
