@@ -1,12 +1,12 @@
 <?php
-
-// app/Http/Controllers/ProfileController.php
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\View\View;
 use App\Models\Prediction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
 
@@ -15,11 +15,12 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(): View
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        // Fetch the authenticated user
+        $user = auth()->user();
+
+        return view('profile.edit', compact('user'));
     }
 
     /**
@@ -27,41 +28,21 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        try {
+            $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+            if ($request->user()->isDirty('email')) {
+                $request->user()->email_verified_at = null;
+            }
+
+            $request->user()->save();
+
+            return Redirect::route('profile.edit')->with('status', 'Profile updated successfully!');
+        } catch (\Exception $e) {
+            return Redirect::route('profile.edit')->with('status', 'Failed to update profile.');
         }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
-    }
-
-    /**
-     * Display the leaderboard.
-     */
     public function leaderboard()
     {
         // Fetch users from the database sorted by credits
@@ -80,7 +61,7 @@ class ProfileController extends Controller
     $users = User::orderBy('credits', 'desc')->get();
 
     // Load the combined leagues and teams data from the JSON file
-    $leaguesData = json_decode(file_get_contents(storage_path('app/leagues.json')), true);
+    $leaguesData = [];
 
     // Parse leagues data
     $leagues = array_map(function ($leagueData) {

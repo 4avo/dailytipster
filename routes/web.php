@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 
+
 Route::get('/predictions', [PredictionController::class, 'index'])->name('predictions');
 Route::post('/predictions', [PredictionController::class, 'store'])->name('predictions.store');
 
